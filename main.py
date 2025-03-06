@@ -29,6 +29,10 @@ threshold = 0.6 # 모델 정확도
 
 count_win = 10 # 이긴 횟수 세팅값
 
+timing_list = [100,300, 400, 500, 600 ,700 ,800, 1000]
+age_list = ['신','10대','20대','30대','40대','50대','60대','70대','다시']
+score_list = [100, 90, 80, 70, 60, 50, 40,30,0]
+
 def process_image(frame_queue, action_queue):
     while True:
         frame = frame_queue.get()
@@ -80,6 +84,35 @@ def processImage(frame, action_queue):
                     cv2.FONT_HERSHEY_PLAIN, fontScale=1, color=classColor, thickness=2)         
 
 
+def cal_result(result_time):
+    idx = 0
+    age = 0
+    score = 0
+
+    if result_time <= timing_list[0]:
+        idx = 0
+    elif timing_list[0] < result_time <= timing_list[1]:
+        idx = 1
+    elif timing_list[1] < result_time <= timing_list[2]:
+        idx = 2
+    elif timing_list[2] < result_time <= timing_list[3]:
+        idx = 3
+    elif timing_list[3] < result_time <= timing_list[4]:
+        idx = 4
+    elif timing_list[4] < result_time <= timing_list[5]:
+        idx = 5
+    elif timing_list[5] < result_time <= timing_list[6]:
+        idx = 6
+    elif timing_list[6] < result_time <= timing_list[7]:
+        idx = 7
+    elif result_time > timing_list[7]:
+        idx = 8
+
+    age = age_list[idx]
+    score = score_list[idx]
+
+    print("당신의 나이: {}, 획득한 점수: {}".format(age, score))
+    return age, score
 
 def main(frame_queue,action_queue):
     score = 0
@@ -99,7 +132,7 @@ def main(frame_queue,action_queue):
         endTime = time.time()
 
         result_time = endTime - startTime
-        print(result_time)
+        age_val, score_val = cal_result(result_time)
 
     
 def capture_frame(frame_queue,action_queue, computer_action):
