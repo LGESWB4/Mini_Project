@@ -10,7 +10,7 @@ class RockPaperScissorsApp(App):
     def build(self):
         self.main_screen = MainScreen(self.switch_to_game)
         self.game_screen = GameScreen(self.switch_to_result)
-        self.result_screen = ResultScreen(self.switch_to_main)
+        self.result_screen = ResultScreen(self.switch_to_main, self.switch_to_game)
 
         self.current_screen = self.main_screen
         return self.current_screen

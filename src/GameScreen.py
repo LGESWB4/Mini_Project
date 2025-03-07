@@ -79,7 +79,7 @@ class GameScreen(FloatLayout):
         if hasattr(self, 'rsp_img'):
             self.remove_widget(self.rsp_img)
 
-        if self.round < 5:
+        if self.round < 1:
             self.round += 1
             self.round_txt.text = f"ROUND: {self.round}"
             self.status_txt.text = "Ready"
