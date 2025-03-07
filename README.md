@@ -14,13 +14,16 @@
 
 
 #### 적용값
-    - multiprocessing 으로 frame_queue에 frame을 담아두고, image processing 
-    - model load 및 inference GPU로 적용 (interpreter = tflite.Interpreter(model_path=modelPath, experimental_delegates=[tflite.load_delegate('libedgetpu.so.1')]) # 모델 로딩)
-    - threshold = 0.6 (확률 60% 적용)
+    - multiprocessing 으로 frame_queue에 frame을 담아두고, image processing 으로 action_queue 에 inference 값 담아둠. (이를 process 간 공유 변수 (Queue, List)를 지정하여 공유 )
+    - model load 및 inference GPU로 적용 해야함 (현재 CPU Multiprocessing)
+    - threshold = 0.65 (확률 65% 적용)
     - count_win = 10 (10 frame cnt -> state 변경)
 
-    - round 미적용 (while로 처리) -> 추후 변경
+    - round 총 10라운드 적용 (5라운드는 조금 적은 듯)
     - sound 미적용 (BGM 및 Effect sound 찾아보기) -> 추후 변경
+
+    - 개발자의 의도 (미리 예측하여 사용자가 내고 있다면, (근데 그 값이 컴퓨터를 이길 값이라면) 컴퓨터 값 변경)
+
 
 #### 적용한 데이터
  
