@@ -11,16 +11,24 @@ DESCRIPTION_FONT_SIZE = 30
 # Font colors
 COLOR_BLUE = hex_to_rgb('#89DDFA')
 COLOR_BLUE_DARK = hex_to_rgb('#496675')
-COLOR_WHITE = hex_to_rgb('#FFFFFF')
+COLOR_WHITE = hex_to_rgb('#E6E6E6')
 COLOR_RED = hex_to_rgb('#FF0004')
 COLOR_GREEN = hex_to_rgb('#94FA89')
+COLOR_BLACK = hex_to_rgb('#000000')
+COLOR_NEON_BLUE = hex_to_rgb('#00FFFF')
+COLOR_NEON_GREEN = hex_to_rgb('#00FF00')
+COLOR_NEON_YELLOW = hex_to_rgb('#FFFF00')
+COLOR_PINK = hex_to_rgb('#E14BB6')
+COLOR_PURPLE = hex_to_rgb('#5D0865')
+COLOR_YELLOW = hex_to_rgb('#FFC000')
 
 # image path
 PAPER_IMG = '../etc/images/paper.png'
 ROCK_IMG = '../etc/images/rock.png'
 SCISSORS_IMG = '../etc/images/scissors.png'
-ZAP_IMG = '../etc/images/zap.png'
 EMOJI_IMG = '../etc/images/emoji.png'
+BG_IMG = '../etc/images/main_bg.png'
+GAME_IMG = '../etc/images/game_bg.png'
 
 # response time title
 AGE_LIST = ['신','10대','20대','30대','40대','50대','60대','70대','실패']

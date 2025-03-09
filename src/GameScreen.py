@@ -14,19 +14,25 @@ class GameScreen(FloatLayout):
         super().__init__(**kwargs)
         self.switch_callback = switch_callback
 
+        self.bg = Image(source=utils.GAME_IMG, allow_stretch=True, keep_ratio=False)
+        self.add_widget(self.bg)
+
         # game settings init
         self.round = 0
         self.fps = 0
 
         # webcam screen init
-        self.webcam = Image(size_hint=(0.8, 1), pos_hint={'center_x': 0.7, 'center_y': 0.5})
+        self.webcam = Image(
+            size_hint=(None, None),
+            size=(530, 530),
+            pos_hint={'center_x': 0.71, 'center_y': 0.55})
         self.add_widget(self.webcam)
 
         # fps text
         self.fps_txt = Label(text=f"FPS: {self.fps}",
                  font_size=utils.DESCRIPTION_FONT_SIZE,
                  font_name=utils.FONT_NAME,
-                 pos_hint={'center_x': 0.1, 'center_y': 0.9},
+                 pos_hint={'center_x': 0.11, 'center_y': 0.87},
                  color=utils.COLOR_WHITE)
         self.add_widget(self.fps_txt)
 
@@ -36,20 +42,17 @@ class GameScreen(FloatLayout):
         self.round_txt = Label(text=f"ROUND: {self.round}",
                  font_size=utils.DESCRIPTION_FONT_SIZE,
                  font_name=utils.FONT_NAME,
-                 pos_hint={'center_x': 0.2, 'center_y': 0.9},
-                 color=utils.COLOR_WHITE)
+                 pos_hint={'center_x': 0.22, 'center_y': 0.87},
+                 color=utils.COLOR_YELLOW)
         self.add_widget(self.round_txt)
 
         # status text
         self.status_txt = Label(text="",
-                                font_size=utils.SUBTITLE_FONT_SIZE,
+                                font_size=utils.TITLE_FONT_SIZE * 1.5,
                                 font_name=utils.FONT_NAME,
-                                color=utils.COLOR_RED)
+                                pos_hint={'center_x': 0.5, 'center_y': 0.5},
+                                color=utils.COLOR_WHITE)
         self.add_widget(self.status_txt)
-
-        # opencv init
-        self.capture = cv2.VideoCapture(0)
-        Clock.schedule_interval(self.update, 1.0 / 30.0)  # 30 FPS
 
         # game start
         self.start_game()
@@ -73,28 +76,47 @@ class GameScreen(FloatLayout):
 
     def start_game(self):
         self.round = 0
+        self.status_txt.text = ""  # 상태 초기화
+
+        if hasattr(self, 'rsp_img'):
+            self.remove_widget(self.rsp_img)
+            del self.rsp_img
+
+        Clock.unschedule(self.next_round)
+        Clock.unschedule(self.show_start)
+        Clock.unschedule(self.show_rsp)
+
+        # opencv init
+        self.capture = cv2.VideoCapture(0)
+        Clock.schedule_interval(self.update, 1.0 / 30.0)  # 30 FPS
+
         self.next_round(0)
 
     def next_round(self, dt):
         if hasattr(self, 'rsp_img'):
             self.remove_widget(self.rsp_img)
+            del self.rsp_img
 
-        if self.round < 1:
+        if self.round < 2:
             self.round += 1
             self.round_txt.text = f"ROUND: {self.round}"
             self.status_txt.text = "Ready"
-            Clock.schedule_once(self.show_start, 5)
+
+            Clock.schedule_once(self.show_start, 3)
         else:
             self.switch_callback(None)
 
     def show_start(self, dt):
         self.status_txt.text = "Start"
-        wait_time = random.uniform(1, 3)
+        wait_time = random.randint(1, 5)
+
         Clock.schedule_once(self.show_rsp, wait_time)
 
     def show_rsp(self, dt):
         self.status_txt.text = ""
-        self.rsp_img = Image(size_hint=(0.3, 0.3), pos_hint={'center_x': 0.2, 'center_y': 0.5})
+
+        self.rsp_img = Image(size_hint=(0.3, 0.3), pos_hint={'center_x': 0.25, 'center_y': 0.5})
         self.rsp_img.source = self.random_rockscissorspaper_img()
         self.add_widget(self.rsp_img)
+
         Clock.schedule_once(self.next_round, 5)
