@@ -6,18 +6,21 @@
 ### 게임 소개
 #### Main 화면 🎮
 <img src="main_screen.png" width=50%>
-- `Start` 버튼 클릭하면 게임 시작
+
+- Start 버튼 클릭하면 게임 시작
 
 #### Game 화면 ✌️✊✋
 <img src="game_screen_ready.png" width=30%>
 <img src="game_screen3.png" width=30%>
 <img src="game_screen reaction_time.png" width=30%>
+
 - `Reday` (랜덤) -> `Start` (랜덤) -> 가위바위보 진행
     - 1 ~ 3초 사이 랜덤으로 가위바위보가 나온다.
     - user는 빠른 반응속도로 컴퓨터를 이기게 되면 높은 점수를 얻게된다. (총 10라운드)
 
 #### Result 화면 🥇
 <img src="result_screen.png" width=50%>
+
 - 얻은 점수에 따라 계산하여 반응 속도 나이가 도출하며, 이에 따른 재밌는 결과가 출력된다.
 
 ### 구현
