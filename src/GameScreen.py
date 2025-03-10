@@ -140,7 +140,7 @@ class GameScreen(FloatLayout):
             Clock.schedule_once(self.show_start, self.total_round)
         else:
             self.camera_process.cancel() # 카메라 프로세스 종료
-            self.switch_callback(self.total_score, self.total_reaction_time)
+            self.switch_callback(self.total_score, self.total_reaction_time/self.total_round)
 
     def show_start(self, dt):
         self.status_txt.text = "Start"
@@ -172,7 +172,7 @@ class GameScreen(FloatLayout):
         print("{}라운드 걸린 시간: {:.2f}ms, 획득한 점수: {}점".format(self.round, self.result_time, score_val))
 
         # 해당 라운드의 결과 출력 (맨 아래화면 부분에)
-        self.round_result_txt.text = f"{self.round}라운드 반응속도{self.result_time:.2f}ms, 점수: {score_val}점"
+        self.round_result_txt.text = f"{self.round}라운드 반응속도 {self.result_time:.2f}ms, 점수: {score_val}점"
         Clock.schedule_once(self.next_round, self.total_round)
 
     def set_computer_action_for_user(self):
@@ -205,7 +205,7 @@ class GameScreen(FloatLayout):
             texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='rgb')
             texture.blit_buffer(buf, colorfmt='rgb', bufferfmt='ubyte')
             self.webcam.texture = texture
-            #self.frame_queue.put(frame)
+            self.frame_queue.put(frame)
 
 
     def update(self, dt):
