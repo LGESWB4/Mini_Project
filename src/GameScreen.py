@@ -7,6 +7,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.image import Image
 from kivy.clock import Clock
+from kivy.core.window import Window
 from kivy.graphics.texture import Texture
 
 class GameScreen(FloatLayout):
@@ -24,7 +25,7 @@ class GameScreen(FloatLayout):
         # webcam screen init
         self.webcam = Image(
             size_hint=(None, None),
-            size=(530, 530),
+            size=(480, 360),
             pos_hint={'center_x': 0.71, 'center_y': 0.55})
         self.add_widget(self.webcam)
 
@@ -88,6 +89,10 @@ class GameScreen(FloatLayout):
 
         # opencv init
         self.capture = cv2.VideoCapture(0)
+        print(Window.size)
+        if not self.capture.isOpened():
+            print("Error: Couldn't open webcam.")
+            return
         Clock.schedule_interval(self.update, 1.0 / 30.0)  # 30 FPS
 
         self.next_round(0)

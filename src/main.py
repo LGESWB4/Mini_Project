@@ -4,8 +4,13 @@ from kivy.uix.floatlayout import FloatLayout
 from MainScreen import MainScreen
 from GameScreen import GameScreen
 from ResultScreen import ResultScreen
+from kivy.config import Config
 
-Window.size = (1280, 720)
+Config.set('graphics', 'width', '1024')
+Config.set('graphics', 'height', '500')
+Config.set('graphics', 'fullscreen', '0')
+
+Window.size = (1024, 600)
 
 class RockPaperScissorsApp(App):
     def build(self):
