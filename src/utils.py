@@ -1,5 +1,5 @@
-#import tflite_runtime.interpreter as tflite
-import tensorflow as tf
+import tflite_runtime.interpreter as tflite
+#import tensorflow as tf
 import warnings
 
 def hex_to_rgb(hex_color):
@@ -54,8 +54,8 @@ warnings.simplefilter("ignore", UserWarning)
 
 # TFLite 모델 로딩
 MODEL_PATH = './MobileNetV3A_RP_Hard_LossAll.tflite'
-INTERPRETER = tf.lite.Interpreter(model_path=MODEL_PATH) # 모델 로딩
-#INTERPRETER = tflite.Interpreter(model_path=MODEL_PATH) # 모델 로딩
+#INTERPRETER = tf.lite.Interpreter(model_path=MODEL_PATH) # 모델 로딩
+INTERPRETER = tflite.Interpreter(model_path=MODEL_PATH) # 모델 로딩
 """try:
     # GPU Delegate 설정
     INTERPRETER = tflite.Interpreter(

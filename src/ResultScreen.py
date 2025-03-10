@@ -94,8 +94,17 @@ class ResultScreen(FloatLayout):
             source='../etc/images/emoji.png',
             size_hint=(None, None),
             size=(100, 100),
-            pos_hint={'center_x': 0.8, 'y': 0.44})
+            pos_hint={'center_x': 0.9, 'y': 0.44})
         self.add_widget(self.emoji)
+
+        # 애니메이션 실행
+        self.start_shaking_animation()
+
+    def start_shaking_animation(self):
+        anim = Animation(pos_hint={'center_x': 0.91}, duration=0.5) + \
+               Animation(pos_hint={'center_x': 0.9}, duration=0.5)
+        anim.repeat = True
+        anim.start(self.emoji)
 
     def update_results(self, total_score, response_time):
         self.total_score = total_score

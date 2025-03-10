@@ -78,7 +78,7 @@ class GameScreen(FloatLayout):
         self.round_result_txt = Label(text="",
                                 font_size=utils.DESCRIPTION_FONT_SIZE,
                                 font_name=utils.FONT_NAME,
-                                pos_hint={'center_x': 0.5, 'center_y': 0.15},
+                                pos_hint={'center_x': 0.5, 'center_y': 0.12},
                                 color=utils.COLOR_WHITE)
         self.add_widget(self.round_result_txt)
 
@@ -103,6 +103,9 @@ class GameScreen(FloatLayout):
     def start_game(self):
         self.round = 0
         self.status_txt.text = ""  # 상태 초기화
+        self.total_reaction_time = 0
+        self.total_score = 0
+        self.init_round()
 
         if hasattr(self, 'rsp_img'):
             self.remove_widget(self.rsp_img)
@@ -122,7 +125,7 @@ class GameScreen(FloatLayout):
         self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
         self.camera_process = Clock.schedule_interval(self.camera_Update, 1.0/30.0) # 30fps
-        self.processing_proc = Clock.schedule_interval(partial(PI.inference, self.frame_queue, self.action_queue), 0)
+        #self.processing_proc = Clock.schedule_interval(partial(PI.inference, self.frame_queue, self.action_queue), 0)
 
         self.next_round(0)
 
@@ -181,7 +184,7 @@ class GameScreen(FloatLayout):
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         self.frame_queue.put(frame)
 
-        #self.set_com_inf=Clock.schedule_once(partial(PI.inference, frame, self.action_queue), 0)
+        self.set_com_inf=Clock.schedule_once(partial(PI.inference, frame, self.action_queue), 0)
         #PI.inference(frame, self.action_queue, 0)
 
 
@@ -199,13 +202,12 @@ class GameScreen(FloatLayout):
     def camera_Update(self, dt):
         ret, frame = self.capture.read()
         if ret:
-            frame = cv2.flip(frame, 0)
+            frame = cv2.flip(frame, 1)
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             buf = frame.flatten()
             texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='rgb')
             texture.blit_buffer(buf, colorfmt='rgb', bufferfmt='ubyte')
             self.webcam.texture = texture
-            self.frame_queue.put(frame)
 
 
     def update(self, dt):
@@ -228,7 +230,7 @@ class GameScreen(FloatLayout):
             self.frame_queue.put(frame)
 
             #self.action_queue = PI.processImage(frame, self.action_queue)
-            #Clock.schedule_once(partial(PI.inference, frame, self.action_queue), 0)
+            Clock.schedule_once(partial(PI.inference, frame, self.action_queue), 0)
 
             if self.action_queue:
                 win_action = (self.computer_action+1)%3
