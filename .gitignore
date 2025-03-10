@@ -1,0 +1,9 @@
+/DB
+/configs
+/deprecated
+/wandb
+/outputs
+/tools
+/example
+cloudflared*
+__pycache__

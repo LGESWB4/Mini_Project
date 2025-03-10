@@ -1,0 +1,11 @@
+ipykernel
+
+opencv_python
+pandas
+matplotlib
+tqdm
+scikit-learn
+albumentations
+wandb
+timm
+pillow
