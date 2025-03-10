@@ -26,7 +26,6 @@ class GameScreen(FloatLayout):
         # game settings init
         self.round = 0
         self.total_round = utils.GAME_ROUND # 총 게임 라운드 수
-        self.fps = 0
         self.startTime = 0
 
         self.total_score = 0
@@ -50,20 +49,11 @@ class GameScreen(FloatLayout):
             pos_hint={'center_x': 0.71, 'center_y': 0.55})
         self.add_widget(self.webcam)
 
-        # fps text
-        self.fps_txt = Label(text=f"FPS: {self.fps}",
-                 font_size=utils.DESCRIPTION_FONT_SIZE,
-                 font_name=utils.FONT_NAME,
-                 pos_hint={'center_x': 0.11, 'center_y': 0.87},
-                 color=utils.COLOR_WHITE)
-        self.add_widget(self.fps_txt)
-
-
         # round text
         self.round_txt = Label(text=f"ROUND: {self.round}",
                  font_size=utils.DESCRIPTION_FONT_SIZE,
                  font_name=utils.FONT_NAME,
-                 pos_hint={'center_x': 0.22, 'center_y': 0.87},
+                 pos_hint={'center_x': 0.15, 'center_y': 0.87},
                  color=utils.COLOR_YELLOW)
         self.add_widget(self.round_txt)
 
@@ -86,9 +76,9 @@ class GameScreen(FloatLayout):
 
         # round result text
         self.round_result_txt = Label(text="",
-                                font_size=utils.SUBTITLE_FONT_SIZE,
+                                font_size=utils.DESCRIPTION_FONT_SIZE,
                                 font_name=utils.FONT_NAME,
-                                pos_hint={'center_x': 0.3, 'center_y': 0.9},
+                                pos_hint={'center_x': 0.5, 'center_y': 0.15},
                                 color=utils.COLOR_WHITE)
         self.add_widget(self.round_result_txt)
 
@@ -140,9 +130,9 @@ class GameScreen(FloatLayout):
         if hasattr(self, 'rsp_img'):
             self.remove_widget(self.rsp_img)
             del self.rsp_img
-
+        self.round_result_txt.text = ""
         self.init_round()   # 데이터 초기화 (라운드 초기화)
-
+        
         if self.round < self.total_round:
             self.round += 1
             self.round_txt.text = f"ROUND: {self.round}"
@@ -156,7 +146,7 @@ class GameScreen(FloatLayout):
         self.status_txt.text = "Start"
 
         # 랜덤 시작 시간 설정
-        wait_time = rand.uniform(1, 3)   
+        wait_time = rand.uniform(1, 3)
         Clock.schedule_once(self.show_rsp, wait_time)
 
     def show_rsp(self, dt):
@@ -182,7 +172,7 @@ class GameScreen(FloatLayout):
         print("{}라운드 걸린 시간: {:.2f}ms, 획득한 점수: {}점".format(self.round, self.result_time, score_val))
 
         # 해당 라운드의 결과 출력 (맨 아래화면 부분에)
-        
+        self.round_result_txt.text = f"{self.round}라운드 반응속도{self.result_time:.2f}ms, 점수: {score_val}점"
         Clock.schedule_once(self.next_round, self.total_round)
 
     def set_computer_action_for_user(self):
@@ -227,13 +217,6 @@ class GameScreen(FloatLayout):
             
         ret, frame = self.capture.read()
         if ret:
-            # FPS 계산
-            curTime = time.time()
-            self.fps = 1/(curTime - self.startTime)
-            self.startTime = curTime
-
-            self.fps_txt.text = f"FPS: {self.fps:.2f}"
-
             frame = cv2.flip(frame, 0)
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             buf = frame.flatten()
@@ -284,7 +267,6 @@ class GameScreen(FloatLayout):
 
     def after_update(self):
         self.update_process.cancel()
-        self.fps_txt.text = f"FPS: 0"
         if hasattr(self, 'rsp_img'):
             self.remove_widget(self.rsp_img)
             del self.rsp_img
