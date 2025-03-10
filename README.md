@@ -4,9 +4,9 @@
 - 빠를 수록 높은 점수를 받으며, score에 따라 본인의 `반응속도 나이`를 알 수 있다.
  
 ### 게임 소개
- 
-### 구현
+<img src="main_screen.png">
 
+### 구현
 #### 적용값
     - multiprocessing 으로 frame_queue에 frame을 담아두고, image processing 으로 action_queue 에 inference 값 담아둠. (이를 process 간 공유 변수 (Queue, List)를 지정하여 공유 )
     - model load 및 inference GPU로 적용 해야함 (현재 CPU Multiprocessing)
@@ -18,7 +18,7 @@
 
 #### 결과값 도출
 
-    - cal_result 함수로 계산 (UI 적용 전까지는 print문으로 출력력)
+    - cal_result 함수로 계산 (UI 적용 전까지는 print문으로 출력)
 
  timing_list = [100,300, 400, 500, 600 ,700 ,800, 1000]
  age_list = ['신','10대','20대','30대','40대','50대','60대','70대','다시']
