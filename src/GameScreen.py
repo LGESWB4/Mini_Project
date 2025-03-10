@@ -202,7 +202,7 @@ class GameScreen(FloatLayout):
     def camera_Update(self, dt):
         ret, frame = self.capture.read()
         if ret:
-            frame = cv2.flip(frame, 1)
+            frame = cv2.flip(frame, 0)
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             buf = frame.flatten()
             texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='rgb')

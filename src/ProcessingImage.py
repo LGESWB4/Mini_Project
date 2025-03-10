@@ -50,35 +50,33 @@ def softmax(x):
     exp_x = np.exp(x - np.max(x))  # 오버플로 방지
     return exp_x / np.sum(exp_x, axis=-1, keepdims=True)
 
-def inference(frame_queue, action_queue, dt):
-    if not frame_queue.empty():
-        frame = frame_queue.get()
-        # 이미지 전처리
-        input_data = preprocess_frame(frame)
-        #s_time = time.time()
-        # 모델 입력 설정 및 실행
-        #print("inference before time{}".format(s_time))
-        utils.INTERPRETER.set_tensor(utils.INPUT_DETAILS[0]['index'], input_data.astype(utils.INPUT_DTYPE))
-        utils.INTERPRETER.invoke()
+def inference(frame, action_queue, dt):
+    # 이미지 전처리
+    input_data = preprocess_frame(frame)
+    #s_time = time.time()
+    # 모델 입력 설정 및 실행
+    #print("inference before time{}".format(s_time))
+    utils.INTERPRETER.set_tensor(utils.INPUT_DETAILS[0]['index'], input_data.astype(utils.INPUT_DTYPE))
+    utils.INTERPRETER.invoke()
 
-        # 결과 가져오기
-        output_data = utils.INTERPRETER.get_tensor(utils.OUTPUT_DETAILS[0]['index'])[0]
+    # 결과 가져오기
+    output_data = utils.INTERPRETER.get_tensor(utils.OUTPUT_DETAILS[0]['index'])[0]
 
-        #e_time = time.time()
-        #print("inference after time{}".format(e_time-s_time))
+    #e_time = time.time()
+    #print("inference after time{}".format(e_time-s_time))
 
-        probabilities = softmax(output_data)  # Softmax 적용
-        ans = np.argmax(probabilities)
-        confidence = probabilities[ans]
+    probabilities = softmax(output_data)  # Softmax 적용
+    ans = np.argmax(probabilities)
+    confidence = probabilities[ans]
 
-        # 50% 미만이면 invalid 처리
-        if confidence < utils.THRESHOLD:
-            text, color = "invalid", (0, 0, 0)  # 검은색
-            ans = -1
-        else:
-            text, color = utils.ANSTOTEXT[ans], utils.COLORLIST[ans]
+    # 50% 미만이면 invalid 처리
+    if confidence < utils.THRESHOLD:
+        text, color = "invalid", (0, 0, 0)  # 검은색
+        ans = -1
+    else:
+        text, color = utils.ANSTOTEXT[ans], utils.COLORLIST[ans]
 
         #print("inference: {}, conf: {}".format(utils.MODEL_TO_ANS[ans], confidence))
 
         # 결과 전송
-        action_queue.append(utils.MODEL_TO_ANS[ans])
+    action_queue.append(utils.MODEL_TO_ANS[ans])
