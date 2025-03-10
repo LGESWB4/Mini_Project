@@ -38,3 +38,48 @@ def processImage(frame, action_queue, dt):
         action_queue.append(c)
 
     return action_queue
+
+def preprocess_frame(frame):
+    """카메라 프레임을 모델 입력 크기에 맞게 변환"""
+    frame = cv2.resize(frame, (utils.WIDTH, utils.HEIGHT), interpolation=cv2.INTER_AREA)  # 빠른 리사이징
+    frame = frame[..., ::-1]  # BGR → RGB 변환 (cvtColor 대신 NumPy 사용)
+    frame = (frame.astype(np.float32) / 255.0).transpose(2, 0, 1)  # (H, W, C) → (C, H, W)
+    return np.expand_dims(frame, axis=0)  # (1, C, H, W) 형태로 변환
+
+def softmax(x):
+    exp_x = np.exp(x - np.max(x))  # 오버플로 방지
+    return exp_x / np.sum(exp_x, axis=-1, keepdims=True)
+
+def inference(frame, action_queue, dt):
+    model_to_ans = [1, 0, 2, ]
+    utils.INTERPRETER.allocate_tensors()
+    input_details = utils.INTERPRETER.get_input_details()
+    output_details = utils.INTERPRETER.get_output_details()
+    input_dtype = input_details[0]['dtype']
+
+    # 이미지 전처리
+    input_data = preprocess_frame(frame)
+
+    # 모델 입력 설정 및 실행
+    utils.INTERPRETER.set_tensor(input_details[0]['index'], input_data.astype(input_dtype))
+    utils.INTERPRETER.invoke()
+
+    # 결과 가져오기
+    output_data = utils.INTERPRETER.get_tensor(output_details[0]['index'])[0]
+    probabilities = softmax(output_data)  # Softmax 적용
+    ans = np.argmax(probabilities)
+    confidence = probabilities[ans]
+
+    
+
+    # 50% 미만이면 invalid 처리
+    if confidence < utils.THRESHOLD:
+        text, color = "invalid", (0, 0, 0)  # 검은색
+        ans = -1
+    else:
+        text, color = utils.ANSTOTEXT[ans], utils.COLOR_LIST[ans]
+
+    print("inference: {}, conf: {}".format(model_to_ans[ans], confidence))
+    
+    # 결과 전송
+    action_queue.append(model_to_ans[ans])
