@@ -13,8 +13,8 @@
 <img src="game_screen3.png" width=30%>
 <img src="game_screen reaction_time.png" width=30%>
 - `Reday` (랜덤) -> `Start` (랜덤) -> 가위바위보 진행
-  - 1 ~ 3초 사이 랜덤으로 가위바위보가 나온다.
-  - user는 빠른 반응속도로 컴퓨터를 이기게 되면 높은 점수를 얻게된다. (총 10라운드)
+    - 1 ~ 3초 사이 랜덤으로 가위바위보가 나온다.
+    - user는 빠른 반응속도로 컴퓨터를 이기게 되면 높은 점수를 얻게된다. (총 10라운드)
 
 #### Result 화면 🥇
 <img src="result_screen.png" width=50%>
@@ -74,6 +74,18 @@
 |MobileNetV3A_CE_baseline|0.9690|97.08%|[[283   1   0][  0 443   0][  6  22 239]]|
 |MobileNetV3A_RP_Hard_LossAll|0.9946|99.50%|[[283   1   0][  0 442   1][  2   1 264]]|
 
+- Loss
+    - CE, Label Smoothing, Focal Loss를 조합하여 사용 (class imbalance, over confident 문제 방지)
+
+- Augmentation
+    - Horizontal/Vertical Flip, Motion Blur, Hue_Saturation 등을 조절한 Hard Augmentation set 사용
+
+- Optimizer, Scheduler
+    - AdamW, ReduceLROnPlateau
+      
+- More Information
+    - WanDB train log: https://wandb.ai/moons98/rsp_classification?nw=nwusermoons98
+    - Exp. info: https://www.notion.so/Toy-Project-1b0cecb86d7180e38a64effc350e0f10?pvs=4
 
 #### 게임 로직
 컴퓨터가 랜덤으로 가위, 바위, 보를 생성
