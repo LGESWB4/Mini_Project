@@ -75,21 +75,22 @@ OUTPUT_DETAILS = INTERPRETER.get_output_details() # output tensor 정보 얻기
 INPUT_DTYPE = INPUT_DETAILS[0]['dtype']
 INPUT_HEIGHT = INPUT_DETAILS[0]['shape'][1]
 INPUT_WIDTH = INPUT_DETAILS[0]['shape'][2]
+
+
 print('model input shape:', (HEIGHT, WIDTH))
 #print(INPUT_DETAILS)
 #print(OUTPUT_DETAILS)
 
 # Game settings
+MODEL_TO_ANS = [1, 0, 2, 3]
 CLASS_LIST = '_ Scissors Rock Paper'.split()
 ANSTOTEXT = {0: 'Scissors', 1: 'Rock', 2: 'Paper'}
-COLOR_LIST = [(), (255, 0, 0), (0, 255, 0), (0, 0, 255)]
-
-
+COLORLIST = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
 
 THRESHOLD = 0.65 # 모델 정확도
 
 COUNT_WIN = 5 # 이긴 frame 세팅값 (debouncing)
-GAME_ROUND = 10 # 게임 라운드 세팅값
+GAME_ROUND = 3 # 게임 라운드 세팅값
 
 TIMING_LIST = [100, 300, 400, 500, 600, 700, 800, 1000]
 

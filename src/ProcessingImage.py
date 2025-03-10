@@ -1,7 +1,7 @@
 import cv2
 import utils
 import numpy as np
-
+import time 
 def processImage(frame, action_queue, dt):
     # frame 크기 저장 -> BB 표시할 때 사용 
     frameH, frameW, _ = frame.shape
@@ -50,36 +50,35 @@ def softmax(x):
     exp_x = np.exp(x - np.max(x))  # 오버플로 방지
     return exp_x / np.sum(exp_x, axis=-1, keepdims=True)
 
-def inference(frame, action_queue, dt):
-    model_to_ans = [1, 0, 2, ]
-    utils.INTERPRETER.allocate_tensors()
-    input_details = utils.INTERPRETER.get_input_details()
-    output_details = utils.INTERPRETER.get_output_details()
-    input_dtype = input_details[0]['dtype']
+def inference(frame_queue, action_queue, dt):
+    if not frame_queue.empty():
+        frame = frame_queue.get()
+        # 이미지 전처리
+        input_data = preprocess_frame(frame)
+        #s_time = time.time()
+        # 모델 입력 설정 및 실행
+        #print("inference before time{}".format(s_time))
+        utils.INTERPRETER.set_tensor(utils.INPUT_DETAILS[0]['index'], input_data.astype(utils.INPUT_DTYPE))
+        utils.INTERPRETER.invoke()
 
-    # 이미지 전처리
-    input_data = preprocess_frame(frame)
+        # 결과 가져오기
+        output_data = utils.INTERPRETER.get_tensor(utils.OUTPUT_DETAILS[0]['index'])[0]
 
-    # 모델 입력 설정 및 실행
-    utils.INTERPRETER.set_tensor(input_details[0]['index'], input_data.astype(input_dtype))
-    utils.INTERPRETER.invoke()
+        #e_time = time.time()
+        #print("inference after time{}".format(e_time-s_time))
 
-    # 결과 가져오기
-    output_data = utils.INTERPRETER.get_tensor(output_details[0]['index'])[0]
-    probabilities = softmax(output_data)  # Softmax 적용
-    ans = np.argmax(probabilities)
-    confidence = probabilities[ans]
+        probabilities = softmax(output_data)  # Softmax 적용
+        ans = np.argmax(probabilities)
+        confidence = probabilities[ans]
 
-    
+        # 50% 미만이면 invalid 처리
+        if confidence < utils.THRESHOLD:
+            text, color = "invalid", (0, 0, 0)  # 검은색
+            ans = -1
+        else:
+            text, color = utils.ANSTOTEXT[ans], utils.COLORLIST[ans]
 
-    # 50% 미만이면 invalid 처리
-    if confidence < utils.THRESHOLD:
-        text, color = "invalid", (0, 0, 0)  # 검은색
-        ans = -1
-    else:
-        text, color = utils.ANSTOTEXT[ans], utils.COLOR_LIST[ans]
+        #print("inference: {}, conf: {}".format(utils.MODEL_TO_ANS[ans], confidence))
 
-    print("inference: {}, conf: {}".format(model_to_ans[ans], confidence))
-    
-    # 결과 전송
-    action_queue.append(model_to_ans[ans])
+        # 결과 전송
+        action_queue.append(utils.MODEL_TO_ANS[ans])

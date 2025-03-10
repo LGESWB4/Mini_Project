@@ -121,6 +121,7 @@ class GameScreen(FloatLayout):
         Clock.unschedule(self.next_round)
         Clock.unschedule(self.show_start)
         Clock.unschedule(self.show_rsp)
+        #Clock.unschedule(self.p)
 
         # openvc camera init
         self.capture = cv2.VideoCapture(0)
@@ -131,7 +132,8 @@ class GameScreen(FloatLayout):
         self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
         self.camera_process = Clock.schedule_interval(self.camera_Update, 1.0/30.0) # 30fps
-        
+        self.processing_proc = Clock.schedule_interval(partial(PI.inference, self.frame_queue, self.action_queue), 0)
+
         self.next_round(0)
 
     def next_round(self, dt):
@@ -139,7 +141,7 @@ class GameScreen(FloatLayout):
             self.remove_widget(self.rsp_img)
             del self.rsp_img
 
-        #self.init_round()   # 데이터 초기화 (라운드 초기화)
+        self.init_round()   # 데이터 초기화 (라운드 초기화)
 
         if self.round < self.total_round:
             self.round += 1
@@ -154,9 +156,7 @@ class GameScreen(FloatLayout):
         self.status_txt.text = "Start"
 
         # 랜덤 시작 시간 설정
-        wait_time = rand.uniform(1, 3)
-        time.sleep(wait_time)
-        
+        wait_time = rand.uniform(1, 3)   
         Clock.schedule_once(self.show_rsp, wait_time)
 
     def show_rsp(self, dt):
@@ -190,7 +190,10 @@ class GameScreen(FloatLayout):
         frame = cv2.flip(frame, 0)
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         self.frame_queue.put(frame)
-        PI.inference(frame, self.action_queue, 0)
+
+        #self.set_com_inf=Clock.schedule_once(partial(PI.inference, frame, self.action_queue), 0)
+        #PI.inference(frame, self.action_queue, 0)
+
 
         if self.action_queue:
             win_action = (self.computer_action+1)%3    
@@ -212,6 +215,8 @@ class GameScreen(FloatLayout):
             texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='rgb')
             texture.blit_buffer(buf, colorfmt='rgb', bufferfmt='ubyte')
             self.webcam.texture = texture
+            #self.frame_queue.put(frame)
+
 
     def update(self, dt):
         self.calls += 1
@@ -240,7 +245,7 @@ class GameScreen(FloatLayout):
             self.frame_queue.put(frame)
 
             #self.action_queue = PI.processImage(frame, self.action_queue)
-            Clock.schedule_once(partial(PI.inference, frame, self.action_queue), 0)
+            #Clock.schedule_once(partial(PI.inference, frame, self.action_queue), 0)
 
             if self.action_queue:
                 win_action = (self.computer_action+1)%3
@@ -283,9 +288,6 @@ class GameScreen(FloatLayout):
         if hasattr(self, 'rsp_img'):
             self.remove_widget(self.rsp_img)
             del self.rsp_img
-
-        self.init_round()
-
         if self.callback:
             self.result_time = self.game_end_time - self.game_start_time
             self.callback()

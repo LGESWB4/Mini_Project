@@ -101,3 +101,10 @@ class ResultScreen(FloatLayout):
         self.total_score = total_score
         self.response_time = response_time
         self.age, self.score = GS.cal_result(self.response_time)
+        self.response_title = utils.RESPONSE_TIME_TITLE[utils.AGE_LIST.index(self.age)]
+        self.response_msg = utils.RESPONSE_MSG[utils.AGE_LIST.index(self.age)][random.randint(0, 3)]
+
+        self.title.text = f"{self.response_title}"
+        self.response_time_txt.text = f"{self.response_time:.2f}ms"
+        self.description.text = f"당신의 반응속도 나이는 [color=#A65CFF]{self.age}[/color]"
+        self.description_msg.text= f"{self.response_msg}"

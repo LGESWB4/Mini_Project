@@ -6,7 +6,6 @@ from GameScreen import GameScreen
 from ResultScreen import ResultScreen
 import os
 from kivy.config import Config
-
 os.environ['NUMEXPR_MAX_THREADS'] = '1'
 
 Config.set('graphics', 'width', '1024')
