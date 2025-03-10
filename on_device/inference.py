@@ -8,7 +8,9 @@ import warnings
 warnings.simplefilter("ignore", UserWarning)
 
 # 모델 경로 설정
-model_path = "/home/willtek/Documents/mini_project/weights/MobileNetV3A_RP_Hard_LossAll.tflite"
+# 'MobileNetV3A_CE_HardAug.tflite', 'MobileNetV3A_RP_Hard_LossAll.tflite', 
+# 'MobileNetV3A_Cos_Hard_LossAll.tflite', 'MobileNetV3A_CE_Baseline.tflite']
+model_path = "./weights/MobileNetV3A_CE_Baseline.tflite"
 
 # 클래스 매핑
 ansToText = {0: 'rock', 1: 'scissors', 2: 'paper'}
@@ -17,7 +19,6 @@ colorList = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
 # 카메라 설정
 WIDTH, HEIGHT = 400, 300  # 원하는 해상도로 설정
 
-# ✅ 프레임 캡처 프로세스
 def capture_frames(frame_queue):
     cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
     cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))  # MJPEG 포맷 사용
@@ -39,7 +40,6 @@ def capture_frames(frame_queue):
 
     cap.release()
 
-# ✅ 이미지 전처리 함수
 def preprocess_frame(frame):
     """카메라 프레임을 모델 입력 크기에 맞게 변환"""
     frame = cv2.resize(frame, (WIDTH, HEIGHT), interpolation=cv2.INTER_AREA)  # 빠른 리사이징
@@ -47,12 +47,10 @@ def preprocess_frame(frame):
     frame = (frame.astype(np.float32) / 255.0).transpose(2, 0, 1)  # (H, W, C) → (C, H, W)
     return np.expand_dims(frame, axis=0)  # (1, C, H, W) 형태로 변환
 
-# ✅ Softmax 함수
 def softmax(x):
     exp_x = np.exp(x - np.max(x))  # 오버플로 방지
     return exp_x / np.sum(exp_x, axis=-1, keepdims=True)
 
-# ✅ 추론 프로세스
 def inference(frame_queue, result_queue):
     try:
         # GPU Delegate 설정
@@ -78,9 +76,9 @@ def inference(frame_queue, result_queue):
 
             # FPS 계산
             cur_time = time.time()
-            fps = 1 / (cur_time - start_time)
+            fps = "30fps" if frame_queue.qsize() == 0 else "Under30"
             # print(f"Latency: {(cur_time - start_time):.2f}")
-            print(f"Queue size: {frame_queue.qsize()}")
+            # print(f"Queue size: {frame_queue.qsize()}")
             start_time = cur_time
 
             # 이미지 전처리
@@ -105,7 +103,6 @@ def inference(frame_queue, result_queue):
             # 결과 전송
             result_queue.put((frame, text, color, fps))
 
-# ✅ 메인 실행 프로세스
 def main():
     mp.set_start_method("spawn", force=True)  # 멀티프로세싱 초기화
 
@@ -126,7 +123,7 @@ def main():
 
             # 예측 결과 출력
             cv2.putText(frame, text, (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
-            cv2.putText(frame, f'FPS: {fps:.1f}', (20, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
+            cv2.putText(frame, f'FPS: {fps}', (20, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
 
             # 화면 출력
             cv2.imshow("Webcam", frame)
