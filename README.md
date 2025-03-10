@@ -10,9 +10,11 @@
 - Start 버튼 클릭하면 게임 시작
 
 #### Game 화면 ✌️✊✋
+<div style="display:flex">
 <img src="game_screen_ready.png" width=30%>
 <img src="game_screen3.png" width=30%>
 <img src="game_screen reaction_time.png" width=30%>
+</div>
 
 - `Reday` (랜덤) -> `Start` (랜덤) -> 가위바위보 진행
     - 1 ~ 3초 사이 랜덤으로 가위바위보가 나온다.
@@ -40,9 +42,11 @@
 
     - cal_result 함수로 계산
 
+```
  timing_list = [100,300, 400, 500, 600 ,700 ,800, 1000]
  age_list = ['신','10대','20대','30대','40대','50대','60대','70대','다시']
  score_list = [100, 90, 80, 70, 60, 50, 40,30,0]
+```
 
 #### 데이터
 - 수집
@@ -91,6 +95,6 @@
     - Exp. info: https://www.notion.so/Toy-Project-1b0cecb86d7180e38a64effc350e0f10?pvs=4
 
 #### 게임 로직
-컴퓨터가 랜덤으로 가위, 바위, 보를 생성
-사용자는 승리할 수 있는 수를 내며, 학습된 모델이 손을 인식
-빠를 수록 높은 점수를 받으며, 점수에 따라 반응 속도 나이를 측정
+- 컴퓨터가 랜덤으로 가위, 바위, 보를 생성
+- 사용자는 승리할 수 있는 수를 내며, 학습된 모델이 손을 인식
+- 빠를 수록 높은 점수를 받으며, 점수에 따라 반응 속도 나이를 측정
